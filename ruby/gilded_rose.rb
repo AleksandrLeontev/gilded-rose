@@ -1,44 +1,50 @@
-require 'delegate'
-
 class GildedRose
   attr_accessor :items
 
   def initialize(items)
-    @items = items
+    @items = items.map { |item| GildedRose.wrap(item) }
   end
 
   def update_quality
-    items.each do |item|
-      RoseItemWrapper.wrap(item).update
+    items.each(&:update)
+  end
+
+  def self.wrap(params)
+    case params[:name]
+    when "Golden Helmet"
+      GoldenHelmet.new(params)
+    when "Aged Brie"
+      AgedBrieRose.new(params)
+    when "Backstage passes to a TAFKAL80ETC concert"
+      BackstagePassRose.new(params)
+    when "Conjured Mana Cake"
+      ConjuredRose.new(params)
+    when "Sulfuras, Hand of Ragnaros"
+      SulfurasRose.new(params)
+    else
+      RoseItem.new(params)
     end
   end
 
 end
 
-class RoseItemWrapper < SimpleDelegator
-  def self.wrap(item)
-    case item.name
-    when "Aged Brie"
-      AgedBrieRose.new(item)
-    when "Backstage passes to a TAFKAL80ETC concert"
-      BackstagePassRose.new(item)
-    when "Conjured Mana Cake"
-      ConjuredRose.new(item)
-    when "Sulfuras, Hand of Ragnaros"
-      SulfurasRose.new(item)
-    else
-      new(item)
-    end
+class RoseItem
+  attr_accessor :name, :sell_in, :quality
+
+  def initialize(params)
+    @name = params.fetch(:name, "Standard Rose")
+    @sell_in = params.fetch(:sell_in, 0)
+    @quality = params.fetch(:quality, 0)
   end
 
   def update
     return if name == "Sulfuras, Hand of Ragnaros"
 
-    age
+    sell
     update_quality
   end
 
-  def age
+  def sell
     self.sell_in -= 1
   end
 
@@ -55,11 +61,25 @@ class RoseItemWrapper < SimpleDelegator
   def quality=(new_quality)
     new_quality = 0 if new_quality < 0
     new_quality = 50 if new_quality > 50
-    super(new_quality)
+    @quality = new_quality
+  end
+
+  def to_s
+    "name: #{@name}, sellIn: #{@sell_in}, quality: #{@quality}"
   end
 end
 
-class AgedBrieRose < RoseItemWrapper
+class GoldenHelmet < RoseItem
+
+  def quality=(new_quality)
+    new_quality = 0 if new_quality < 0
+    new_quality = 80 if new_quality > 80
+    @quality = new_quality
+  end
+
+end
+
+class AgedBrieRose < RoseItem
   def calculate_quality_adjustment
     adjustment = 1
     adjustment += 1 if sell_in < 0
@@ -67,7 +87,7 @@ class AgedBrieRose < RoseItemWrapper
   end
 end
 
-class BackstagePassRose < RoseItemWrapper
+class BackstagePassRose < RoseItem
   def calculate_quality_adjustment
     adjustment = 1
     adjustment += 1 if sell_in < 11
@@ -77,7 +97,7 @@ class BackstagePassRose < RoseItemWrapper
   end
 end
 
-class ConjuredRose < RoseItemWrapper
+class ConjuredRose < RoseItem
   def calculate_quality_adjustment
     adjustment = -2
     adjustment -= 2 if sell_in < 0
@@ -85,22 +105,8 @@ class ConjuredRose < RoseItemWrapper
   end
 end
 
-class SulfurasRose < RoseItemWrapper
+class SulfurasRose < RoseItem
   def calculate_quality_adjustment
     # This item don't change anything
-  end
-end
-
-class RoseItem
-  attr_accessor :name, :sell_in, :quality
-
-  def initialize(name, sell_in, quality)
-    @name = name
-    @sell_in = sell_in
-    @quality = quality
-  end
-
-  def to_s
-    "name: #{@name}, sellIn: #{@sell_in}, quality: #{@quality}"
   end
 end

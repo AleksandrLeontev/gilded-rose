@@ -1,6 +1,7 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    awesome_print (1.8.0)
     docile (1.1.5)
     minitest (5.14.0)
     multi_json (1.14.1)
@@ -14,6 +15,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  awesome_print
   minitest (~> 5.3)
   simplecov (~> 0.9.0)
 

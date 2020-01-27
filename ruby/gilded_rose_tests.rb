@@ -1,18 +1,19 @@
 require 'simplecov'
 SimpleCov.start
 
+require "awesome_print"
 require 'minitest/autorun'
-require "./gilded_rose"
+require './gilded_rose'
 
 class CharacterizationTest < Minitest::Test
   def setup
     @items = []
-    @items << RoseItem.new("+5 Dexterity Vest", 10, 20)
-    @items << RoseItem.new("Aged Brie", 2, 0)
-    @items << RoseItem.new("Elixir of the Mongoose", 5, 7)
-    @items << RoseItem.new("Sulfuras, Hand of Ragnaros", 0, 80)
-    @items << RoseItem.new("Backstage passes to a TAFKAL80ETC concert", 15, 20)
-    @items << RoseItem.new("Conjured Mana Cake", 3, 6)
+    @items << RoseItem.new('+5 Dexterity Vest', 10, 20)
+    @items << RoseItem.new('Aged Brie', 2, 0)
+    @items << RoseItem.new('Elixir of the Mongoose', 5, 7)
+    @items << RoseItem.new('Sulfuras, Hand of Ragnaros', 0, 80)
+    @items << RoseItem.new('Backstage passes to a TAFKAL80ETC concert', 15, 20)
+    @items << RoseItem.new('Conjured Mana Cake', 3, 6)
     @rose = GildedRose.new(@items)
     @items = @rose.instance_variable_get(:@items)
   end
@@ -82,9 +83,12 @@ class CharacterizationTest < Minitest::Test
   private
 
   def assert_items(*expected_items)
+    puts "Start: #{caller[0]}".red
     expected_items.zip(items) do |(sell_in, quality), item|
+      puts item.to_s.green
       assert_equal(sell_in, item.sell_in, "#{item.name} sell_in")
       assert_equal(quality, item.quality, "#{item.name} quality")
     end
+    puts "End: #{caller[0]}".red
   end
 end

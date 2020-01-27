@@ -87,7 +87,7 @@ end
 
 class SulfurasRose < RoseItemWrapper
   def calculate_quality_adjustment
-    #This item don't change anything
+    # This item don't change anything
   end
 end
 
@@ -101,6 +101,6 @@ class RoseItem
   end
 
   def to_s
-    "#{@name}, #{@sell_in}, #{@quality}"
+    "name: #{@name}, sellIn: #{@sell_in}, quality: #{@quality}"
   end
 end

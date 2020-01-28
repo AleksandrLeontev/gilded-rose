@@ -2,6 +2,12 @@ require File.join(File.dirname(__FILE__), 'gilded_rose')
 
 describe GildedRose do
 
+  let(:helmet_roses) {
+    [
+        RoseItem.new('Golden Helmet', 10, 90)
+    ]
+  }
+
   let(:roses) { [
       RoseItem.new('+5 Dexterity Vest', 10, 20),
       RoseItem.new('+5 Dexterity Vest', 10, 0),
@@ -35,6 +41,18 @@ describe GildedRose do
         RoseItem.new('Sulfuras, Hand of Ragnaros', 10, 80),
     ]
   }
+
+  describe 'GoldenHelmet#update_quality' do
+
+    before :each do
+      GildedRose.new(helmet_roses).update_quality
+    end
+
+    it 'quality should not be more than 80' do
+      expect(helmet_roses[0].quality).to eq 80
+    end
+
+  end
 
   describe 'RoseItem#update_quality' do
 

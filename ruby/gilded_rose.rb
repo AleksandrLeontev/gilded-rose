@@ -18,6 +18,8 @@ end
 class RoseItemWrapper < SimpleDelegator
   def self.wrap(item)
     case item.name
+    when "Golden Helmet"
+      GoldenHelmetRose.new(item)
     when "Aged Brie"
       AgedBrieRose.new(item)
     when "Backstage passes to a TAFKAL80ETC concert"
@@ -34,11 +36,11 @@ class RoseItemWrapper < SimpleDelegator
   def update
     return if name == "Sulfuras, Hand of Ragnaros"
 
-    age
+    sell
     update_quality
   end
 
-  def age
+  def sell
     self.sell_in -= 1
   end
 
@@ -53,9 +55,25 @@ class RoseItemWrapper < SimpleDelegator
   end
 
   def quality=(new_quality)
-    new_quality = 0 if new_quality < 0
+    new_quality = 0 if new_quality.negative?
     new_quality = 50 if new_quality > 50
     super(new_quality)
+  end
+end
+
+class GoldenHelmetRose < RoseItemWrapper
+  def quality=(new_quality)
+    new_quality = 0 if new_quality.negative?
+    new_quality = 80 if new_quality > 80
+    __getobj__.quality = new_quality
+  end
+end
+
+class AgedBrieRose < RoseItemWrapper
+  def calculate_quality_adjustment
+    adjustment = 1
+    adjustment += 1 if sell_in < 0
+    adjustment
   end
 end
 
